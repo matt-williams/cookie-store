@@ -26,6 +26,7 @@ cleos set contract eosio.token /contracts/eosio.token -p eosio.token
 cleos push action eosio.token create '{"issuer": "eosio", "maximum_supply": "1000000000.0000 SYS"}' -p eosio.token
 cleos wallet create_key # ... and save public key to ~/.public-key
 cleos create account eosio cookie.store $(cat ~/.public-key)
+cleos set account permission cookie.store active '{"threshold": 1, "keys": [{"key": "'$(cat ~/.public-key)'", "weight": 1}], "accounts": [{"permission": {"actor":"cookie.store", "permission":"eosio.code"}, "weight": 1}]}' owner -p cookie.store
 cleos wallet create_key # ... and save public key to ~/.client-public-key
 cleos create account eosio client $(cat ~/.client-public-key)
 cleos wallet create_key # ... and save public key to ~/.server1-public-key
