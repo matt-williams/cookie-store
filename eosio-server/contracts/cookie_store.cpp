@@ -76,8 +76,8 @@ class cookie_store : public eosio::contract {
     }
     
   private:
-    /// @abi table directory_records
-    struct directory_record {
+    /// @abi table dir_records
+    struct dir_record {
       account_name advertiser; // primary key
       uint64_t phone;
       public_key public_key;
@@ -86,9 +86,9 @@ class cookie_store : public eosio::contract {
       uint64_t by_phone() const { return phone; }
     };
 
-    typedef eosio::multi_index<N(records), directory_record, eosio::indexed_by<N(byphone), eosio::const_mem_fun<directory_record, uint64_t, &directory_record::by_phone> > > directory_record_table;
+    typedef eosio::multi_index<N(records), dir_record, eosio::indexed_by<N(byphone), eosio::const_mem_fun<dir_record, uint64_t, &dir_record::by_phone> > > dir_record_table;
 
-    directory_record_table _dir_records;
+    dir_record_table _dir_records;
 
     /// @abi table bids_records
     struct bids_record {
@@ -106,7 +106,7 @@ class cookie_store : public eosio::contract {
 
     bids_record_table _bids_records;
 
-    struct used_cookies_record {
+    struct used_record {
       uint64_t uuid;
       uint64_t bounty_uuid;
       std::string cookie;
@@ -115,9 +115,9 @@ class cookie_store : public eosio::contract {
       uint64_t by_bounty_uuid() const { return bounty_uuid; }
     };
 
-    typedef eosio::multi_index<N(records), used_cookies_record, eosio::indexed_by<N(bybidderuuid), eosio::const_mem_fun<used_cookies_record, uint64_t, &used_cookies_record::by_bounty_uuid> > > used_cookies_record_table;
+    typedef eosio::multi_index<N(records), used_record, eosio::indexed_by<N(bybidderuuid), eosio::const_mem_fun<used_record, uint64_t, &used_record::by_bounty_uuid> > > used_record_table;
 
-    used_cookies_record_table _used_records;
+    used_record_table _used_records;
 
     public_key directory_retrieve( account_name advertiser ) {
       auto itr = _dir_records.find( advertiser );
