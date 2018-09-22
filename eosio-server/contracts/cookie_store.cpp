@@ -98,7 +98,7 @@ class cookie_store : public eosio::contract {
       uint64_t by_phone() const { return phone; }
     };
 
-    typedef eosio::multi_index<N(records), dir_record, eosio::indexed_by<N(byphone), eosio::const_mem_fun<dir_record, uint64_t, &dir_record::by_phone> > > dir_table;
+    typedef eosio::multi_index<N(dir), dir_record, eosio::indexed_by<N(byphone), eosio::const_mem_fun<dir_record, uint64_t, &dir_record::by_phone> > > dir_table;
 
     dir_table _dir_records;
 
@@ -114,10 +114,11 @@ class cookie_store : public eosio::contract {
       uint64_t by_bidder() const { return bidder; }
     };
 
-    typedef eosio::multi_index<N(records), bids_record, eosio::indexed_by<N(bybidder), eosio::const_mem_fun<bids_record, uint64_t, &bids_record::by_bidder> > > bids_table;
+    typedef eosio::multi_index<N(bids), bids_record, eosio::indexed_by<N(bybidder), eosio::const_mem_fun<bids_record, uint64_t, &bids_record::by_bidder> > > bids_table;
 
     bids_table _bids_records;
 
+    ///@abi table used_records
     struct used_record {
       uint64_t uuid;
       uint64_t bid_uuid;
@@ -127,7 +128,7 @@ class cookie_store : public eosio::contract {
       uint64_t by_bid_uuid() const { return bid_uuid; }
     };
 
-    typedef eosio::multi_index<N(records), used_record, eosio::indexed_by<N(bybidderuuid), eosio::const_mem_fun<used_record, uint64_t, &used_record::by_bid_uuid> > > used_table;
+    typedef eosio::multi_index<N(used), used_record, eosio::indexed_by<N(bybidderuuid), eosio::const_mem_fun<used_record, uint64_t, &used_record::by_bid_uuid> > > used_table;
 
     used_table _used_records;
 
