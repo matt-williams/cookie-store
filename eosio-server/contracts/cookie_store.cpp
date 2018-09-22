@@ -18,14 +18,6 @@ class cookie_store : public eosio::contract {
     }
 
     ///@abi action
-    public_key directory_retrieve( account_name advertiser ) {
-      auto itr = _directory_records.find( advertiser );
-      eosio_assert( itr != _directory_records.end(), "Record does not exist" );
-     
-     return itr->public_key;
-    }
-
-    ///@abi action
     void directory_remove( account_name advertiser ) {
       auto itr = _directory_records.find( advertiser );
       eosio_assert( itr != _directory_records.end(), "Record does not exist" );
@@ -47,15 +39,16 @@ class cookie_store : public eosio::contract {
     }
 
     ///@abi action
-    void bids_update( uint64_t uuid, account_name browser ) {
+    void bids_update( uint64_t uuid, account_name browser, std::string signed_cookie, std::string cookie ) {
       auto itr = _bids_records.find( uuid );
       eosio_assert( itr != _bids_records.end(), "Record does not exist" );
 
       _bids_records.modify( itr, get_self(), [&]( auto& rcrd ){
         eosio_assert( rcrd.bounty >= rcrd.price_per, "Insufficient funds in bounty" );
-        rcrd.bounty -= rcrd.price_per;
-        INLINE_ACTION_SENDER( eosio::token, transfer )( N(eosio.token), {{get_self(),N(active)},{browser,N(active)}},
-         { get_self(), browser, rcrd.price_per, std::string("Bounty payment") } );
+        if( valid( signed_cookie, cookie, directory_retrieve( itr->bidder ) ) ) {
+          rcrd.bounty -= rcrd.price_per;
+          INLINE_ACTION_SENDER( eosio::token, transfer )( N(eosio.token), {{get_self(),N(active)},{browser,N(active)}}, { get_self(), browser, rcrd.price_per, std::string("Bounty payment") } );
+        }
       });
     }
 
@@ -121,6 +114,16 @@ class cookie_store : public eosio::contract {
     typedef eosio::multi_index<N(records), used_ids_record, eosio::indexed_by<N(bybidderuuid), eosio::const_mem_fun<used_ids_record, uint64_t, &used_ids_record::by_bounty_uuid> > > used_ids_record_table;
 
     used_ids_record_table _used_ids_records;
+
+    public_key directory_retrieve( account_name advertiser ) {
+      auto itr = _directory_records.find( advertiser );
+      eosio_assert( itr != _directory_records.end(), "Record does not exist" );
+     
+     return itr->public_key;
+    }
+
+    bool valid( std::string signed_cookie, std::string cookie, public_key ) { return true; }
+
 };
 
 EOSIO_ABI( cookie_store, (directory_create)(directory_remove)(bids_create)(bids_update)(bids_remove)(used_ids_create) )
