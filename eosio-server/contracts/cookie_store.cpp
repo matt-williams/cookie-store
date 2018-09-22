@@ -50,6 +50,7 @@ class cookie_store : public eosio::contract {
         if( valid( signed_cookie, cookie, directory_retrieve( itr->bidder ) ) ) {
           rcrd.bounty -= rcrd.price_per;
           INLINE_ACTION_SENDER( eosio::token, transfer )( N(eosio.token), {{get_self(),N(active)},{browser,N(active)}}, { get_self(), browser, rcrd.price_per, std::string("Bounty payment") } );
+          usedcreate( uuid, cookie );
         }
       });
     }
@@ -62,19 +63,6 @@ class cookie_store : public eosio::contract {
       _bids_records.erase( itr );
     }
 
-    ///@abi action
-    void usedcreate( uint64_t bounty_uuid, std::string cookie ) { 
-      for( auto itr = _used_records.find( bounty_uuid ); itr != _used_records.end(); ++itr ) {
-        eosio_assert( (itr->cookie).compare(cookie) != 0, "Record already exists" );
-      }
-
-      _used_records.emplace( get_self(), [&]( auto& rcrd ) {
-        rcrd.uuid = _used_records.available_primary_key();
-        rcrd.bounty_uuid = bounty_uuid;
-        rcrd.cookie = cookie;
-      });
-    }
-    
   private:
     /// @abi table dir_records
     struct dir_record {
@@ -128,6 +116,18 @@ class cookie_store : public eosio::contract {
 
     bool valid( std::string signed_cookie, std::string cookie, public_key ) { return true; }
 
+    void usedcreate( uint64_t bounty_uuid, std::string cookie ) { 
+      for( auto itr = _used_records.find( bounty_uuid ); itr != _used_records.end(); ++itr ) {
+        eosio_assert( (itr->cookie).compare(cookie) != 0, "Record already exists" );
+      }
+
+      _used_records.emplace( get_self(), [&]( auto& rcrd ) {
+        rcrd.uuid = _used_records.available_primary_key();
+        rcrd.bounty_uuid = bounty_uuid;
+        rcrd.cookie = cookie;
+      });
+    }
+
 };
 
-EOSIO_ABI( cookie_store, (dircreate)(dirremove)(bidscreate)(bidsupdate)(bidsremove)(usedcreate) )
+EOSIO_ABI( cookie_store, (dircreate)(dirremove)(bidscreate)(bidsupdate)(bidsremove) )
