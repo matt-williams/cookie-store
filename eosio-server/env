@@ -1,0 +1,1 @@
+alias cleos='docker exec -it nodeos /opt/eosio/bin/cleos --url http://127.0.0.1:8888 --wallet-url http://'$(docker network inspect eosdev --format='{{range .Containers}}{{if eq .Name "keosd"}}{{.IPv4Address}}{{end}}{{end}}' | sed -e 's/\/.*//g')':9876'
