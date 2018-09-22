@@ -5,13 +5,13 @@
 class cookie_store : public eosio::contract {
 
   public:
-    cookie_store( account_name s ) : contract( s ), _directory_records( s, s ), _bids_records( s, s ), _used_ids_records( s, s ) { }
+    cookie_store( account_name s ) : contract( s ), _dir_records( s, s ), _bids_records( s, s ), _used_records( s, s ) { }
 
     ///@abi action
     void directory_create( account_name advertiser, public_key public_key ) {
-       eosio_assert( _directory_records.find( advertiser ) == _directory_records.end(), "Record already exists" );
+       eosio_assert( _dir_records.find( advertiser ) == _dir_records.end(), "Record already exists" );
 
-       _directory_records.emplace( get_self(), [&]( auto& rcrd ) {
+       _dir_records.emplace( get_self(), [&]( auto& rcrd ) {
          rcrd.advertiser = advertiser;
          rcrd.public_key = public_key;
        });
@@ -19,18 +19,20 @@ class cookie_store : public eosio::contract {
 
     ///@abi action
     void directory_remove( account_name advertiser ) {
-      auto itr = _directory_records.find( advertiser );
-      eosio_assert( itr != _directory_records.end(), "Record does not exist" );
+      auto itr = _dir_records.find( advertiser );
+      eosio_assert( itr != _dir_records.end(), "Record does not exist" );
       
-      _directory_records.erase( itr );
+      _dir_records.erase( itr );
     }
 
     ///@abi action
-    void bids_create( uint64_t uuid, account_name bidder, account_name desired_link, eosio::asset bounty, eosio::asset price_per ) {
-       eosio_assert( _bids_records.find( uuid ) == _bids_records.end(), "Record already exists" );
+    void bids_create( account_name bidder, account_name desired_link, eosio::asset bounty, eosio::asset price_per ) {
+       for( auto itr = _bids_records.find( bidder); itr != _bids_records.end(); ++itr ) {
+         eosio_assert( itr->desired_link != desired_link, "Record already exists" );
+       }
 
        _bids_records.emplace( get_self(), [&]( auto& rcrd ) {
-         rcrd.uuid = uuid;
+         rcrd.uuid = _bids_records.available_primary_key();
          rcrd.bidder = bidder;
          rcrd.desired_link = desired_link;
          rcrd.bounty = bounty;
@@ -61,13 +63,15 @@ class cookie_store : public eosio::contract {
     }
 
     ///@abi action
-    void used_ids_create( uint64_t uuid, uint64_t bounty_id, std::string id ) { 
-      eosio_assert( _used_ids_records.find( uuid ) == _used_ids_records.end(), "Record already exists" );
+    void used_cookies_create( uint64_t bounty_uuid, std::string cookie ) { 
+      for( auto itr = _used_records.find( bounty_uuid ); itr != _used_records.end(); ++itr ) {
+        eosio_assert( (itr->cookie).compare(cookie) != 0, "Record already exists" );
+      }
 
-      _used_ids_records.emplace( get_self(), [&]( auto& rcrd ) {
-        rcrd.uuid = uuid;
-        rcrd.bounty_uuid = uuid;
-        rcrd.id = id;
+      _used_records.emplace( get_self(), [&]( auto& rcrd ) {
+        rcrd.uuid = _used_records.available_primary_key();
+        rcrd.bounty_uuid = bounty_uuid;
+        rcrd.cookie = cookie;
       });
     }
     
@@ -84,7 +88,7 @@ class cookie_store : public eosio::contract {
 
     typedef eosio::multi_index<N(records), directory_record, eosio::indexed_by<N(byphone), eosio::const_mem_fun<directory_record, uint64_t, &directory_record::by_phone> > > directory_record_table;
 
-    directory_record_table _directory_records;
+    directory_record_table _dir_records;
 
     /// @abi table bids_records
     struct bids_record {
@@ -102,22 +106,22 @@ class cookie_store : public eosio::contract {
 
     bids_record_table _bids_records;
 
-    struct used_ids_record {
+    struct used_cookies_record {
       uint64_t uuid;
       uint64_t bounty_uuid;
-      std::string id;
+      std::string cookie;
 
       uint64_t primary_key() const { return uuid; }
       uint64_t by_bounty_uuid() const { return bounty_uuid; }
     };
 
-    typedef eosio::multi_index<N(records), used_ids_record, eosio::indexed_by<N(bybidderuuid), eosio::const_mem_fun<used_ids_record, uint64_t, &used_ids_record::by_bounty_uuid> > > used_ids_record_table;
+    typedef eosio::multi_index<N(records), used_cookies_record, eosio::indexed_by<N(bybidderuuid), eosio::const_mem_fun<used_cookies_record, uint64_t, &used_cookies_record::by_bounty_uuid> > > used_cookies_record_table;
 
-    used_ids_record_table _used_ids_records;
+    used_cookies_record_table _used_records;
 
     public_key directory_retrieve( account_name advertiser ) {
-      auto itr = _directory_records.find( advertiser );
-      eosio_assert( itr != _directory_records.end(), "Record does not exist" );
+      auto itr = _dir_records.find( advertiser );
+      eosio_assert( itr != _dir_records.end(), "Record does not exist" );
      
      return itr->public_key;
     }
@@ -126,4 +130,4 @@ class cookie_store : public eosio::contract {
 
 };
 
-EOSIO_ABI( cookie_store, (directory_create)(directory_remove)(bids_create)(bids_update)(bids_remove)(used_ids_create) )
+EOSIO_ABI( cookie_store, (directory_create)(directory_remove)(bids_create)(bids_update)(bids_remove)(used_cookies_create) )
