@@ -72,7 +72,7 @@ class cookie_store : public eosio::contract {
                    directory_retrieve( itr->desired_link ) ) ) 
         {
           rcrd.bounty -= rcrd.price_per;
-          INLINE_ACTION_SENDER( eosio::token, transfer )( N(eosio.token), {{get_self(),N(active)},{browser,N(active)}}, { get_self(), browser, rcrd.price_per, std::string("Bounty payment") } );
+          INLINE_ACTION_SENDER( eosio::token, transfer )( N(eosio.token), {{get_self(),N(active)}}, { get_self(), browser, rcrd.price_per, std::string("Bounty payment") } );
           usedcreate( uuid, cookie );
         }
       });
