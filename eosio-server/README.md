@@ -78,9 +78,11 @@ cleos push action cookie.store bidsremove '{"uuid": 0}' -p client
 ## Reset (demo purposes only)
 
 ```
+cleos wallet unlock --password $(cat ~/.password)
 cleos push action cookie.store reset '{}' -p client
 cleos get table cookie.store cookie.store bids
 cleos get table cookie.store cookie.store used
+# If either of the above returns results, run the reset command again.
 cleos push action cookie.store bidscreate '{"bidder": "acmesuper", "desired_link": "weddingsrus", "bounty": "100.0000 SYS", "price_per": "1.0000 SYS"}' -p acmesuper
 cleos push action eosio.token transfer '["acmesuper", "cookie.store", "100.0000 SYS", ""]' -p acmesuper
 ```
