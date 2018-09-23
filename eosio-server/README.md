@@ -68,3 +68,15 @@ cleos push action eosio.token transfer '["server1", "cookie.store", "100.0000 SY
 ```
 cleos push action cookie.store bidsupdate '{"uuid": 0, "browser": "client", "signed_cookie": "", "cookie": "123456789abcdef", "other_signed_cookie": "", "other_cookie": ""}' -p client
 ```
+
+## Removing bids
+
+```
+cleos push action cookie.store bidsremove '{"uuid": 0}' -p client
+```
+
+## Reset (demo purposes only)
+
+```
+cleos push action cookie.store reset '{}' -p client
+```
