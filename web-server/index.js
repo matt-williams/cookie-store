@@ -1,9 +1,10 @@
-const express = require('express')
-const app = express()
-const port = 8080
+const express = require('express');
+const app = express(;)
+const port = process.env.PORT || 8080;
+const server = process.env.SERVER || "server1";
 
 app.get('/', (req, res) => {
-  res.set('X-CookieStore', '123456789abcdef');
+  res.set('X-CookieStore', '${server} 123456789abcdef');
   res.send('Hello World!')
 })
 
