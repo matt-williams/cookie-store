@@ -85,6 +85,9 @@ class cookie_store : public eosio::contract {
       eosio_assert( itr != _bids_records.end(), "Record does not exist" );
       
       _bids_records.erase( itr );
+
+      auto used_records_by_bidder_uuid = _used_records.get_index<N(bybidderuuid)>();
+      used_records_by_bidder_uuid.erase( used_records_by_bidder_uuid.find(uuid) );
     }
 
   private:
