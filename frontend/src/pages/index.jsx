@@ -64,7 +64,7 @@ class Index extends Component {
 
     // define actionName and action according to event type
     console.log(event.target.name);
-    switch (event.id == "test") {
+    switch (event.id === "test") {
       case "submit":
         actionName = "update";
         actionData = {
@@ -149,8 +149,6 @@ class Index extends Component {
     );
     let noteCards = usedTable.map((row, i) =>
       generateCard(i, row.cookie));
-
-    let cookieTable = [];
 
     return (
       <div>
