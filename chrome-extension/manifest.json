@@ -1,6 +1,6 @@
 {
   "name": "CookieStore",
-  "version": "0.1",
+  "version": "1.0",
   "description": "Sell your tracking cookies for cash!",
   "permissions": ["notifications", "storage", "webRequest", "*://*/*"],
   "background": {
@@ -14,8 +14,13 @@
     "128": "images/cookie128.png"
   },
   "web_accessible_resources": [
+    "images/cookie48.png",
     "images/tick24.png",
     "images/cross24.png"
   ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "manifest_version": 2
 }
