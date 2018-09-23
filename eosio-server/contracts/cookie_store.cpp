@@ -87,7 +87,21 @@ class cookie_store : public eosio::contract {
       _bids_records.erase( itr );
 
       auto used_records_by_bidder_uuid = _used_records.get_index<N(bybidderuuid)>();
-      used_records_by_bidder_uuid.erase( used_records_by_bidder_uuid.find(uuid) );
+      auto itr2 = used_records_by_bidder_uuid.find(uuid);
+      if (itr2 != used_records_by_bidder_uuid.end()) {
+        used_records_by_bidder_uuid.erase( used_records_by_bidder_uuid.find(uuid) );
+      }
+    }
+
+    // For pre-demo reset - TODO remove before production
+    void reset()
+    {
+      if (_bids_records.begin() != _bids_records.end()) {
+        _bids_records.erase(_bids_records.begin());
+      }
+      if (_used_records.begin() != _used_records.end()) {
+        _used_records.erase(_used_records.begin());
+      }
     }
 
   private:
@@ -165,7 +179,6 @@ class cookie_store : public eosio::contract {
         rcrd.cookie = cookie;
       });
     }
-
 };
 
-EOSIO_ABI( cookie_store, (dircreate)(dirremove)(bidscreate)(bidsupdate)(bidsremove) )
+EOSIO_ABI( cookie_store, (dircreate)(dirremove)(bidscreate)(bidsupdate)(bidsremove)(reset) )
