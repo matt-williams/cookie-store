@@ -37,3 +37,15 @@ document.getElementById('save').addEventListener('click', () => {
     }, 1000);
   });
 });
+
+document.getElementById('clear').addEventListener('click', () => {
+  chrome.storage.sync.get({
+    account: "",
+    publicKey: "",
+    privateKey: ""
+  }, (items) => {
+    chrome.storage.sync.clear(() => {
+      chrome.storage.sync.set(items);
+    });
+  });
+});

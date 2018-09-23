@@ -9,5 +9,6 @@ docker build -t frontend .
 ## Run
 
 ```
-docker run --rm -d -p 8080:3000 frontend
+docker kill frontend
+docker run --rm -d -p 8080:3000 --name frontend frontend
 ```
