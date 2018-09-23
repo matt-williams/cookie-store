@@ -12,6 +12,11 @@
       "from": "array-flatten@1.1.1",
       "resolved": "https://registry.npmjs.org/array-flatten/-/array-flatten-1.1.1.tgz"
     },
+    "async": {
+      "version": "2.6.1",
+      "from": "async@>=2.6.0 <2.7.0",
+      "resolved": "https://registry.npmjs.org/async/-/async-2.6.1.tgz"
+    },
     "body-parser": {
       "version": "1.18.2",
       "from": "body-parser@1.18.2",
@@ -36,6 +41,11 @@
       "version": "0.3.1",
       "from": "cookie@0.3.1",
       "resolved": "https://registry.npmjs.org/cookie/-/cookie-0.3.1.tgz"
+    },
+    "cookie-parser": {
+      "version": "1.4.3",
+      "from": "cookie-parser@latest",
+      "resolved": "https://registry.npmjs.org/cookie-parser/-/cookie-parser-1.4.3.tgz"
     },
     "cookie-signature": {
       "version": "1.0.6",
@@ -117,6 +127,16 @@
       "from": "ipaddr.js@1.8.0",
       "resolved": "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.8.0.tgz"
     },
+    "lodash": {
+      "version": "4.17.11",
+      "from": "lodash@>=4.17.10 <5.0.0",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.11.tgz"
+    },
+    "lru-cache": {
+      "version": "4.1.3",
+      "from": "lru-cache@>=4.1.3 <4.2.0",
+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-4.1.3.tgz"
+    },
     "media-typer": {
       "version": "0.3.0",
       "from": "media-typer@0.3.0",
@@ -152,6 +172,16 @@
       "from": "ms@2.0.0",
       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz"
     },
+    "mustache": {
+      "version": "2.3.2",
+      "from": "mustache@>=2.3.0 <2.4.0",
+      "resolved": "https://registry.npmjs.org/mustache/-/mustache-2.3.2.tgz"
+    },
+    "mustache-express": {
+      "version": "1.2.7",
+      "from": "mustache-express@>=1.2.7 <2.0.0",
+      "resolved": "https://registry.npmjs.org/mustache-express/-/mustache-express-1.2.7.tgz"
+    },
     "negotiator": {
       "version": "0.6.1",
       "from": "negotiator@0.6.1",
@@ -176,6 +206,11 @@
       "version": "2.0.4",
       "from": "proxy-addr@>=2.0.3 <2.1.0",
       "resolved": "https://registry.npmjs.org/proxy-addr/-/proxy-addr-2.0.4.tgz"
+    },
+    "pseudomap": {
+      "version": "1.0.2",
+      "from": "pseudomap@>=1.0.2 <2.0.0",
+      "resolved": "https://registry.npmjs.org/pseudomap/-/pseudomap-1.0.2.tgz"
     },
     "qs": {
       "version": "6.5.1",
@@ -258,6 +293,11 @@
       "version": "1.1.2",
       "from": "vary@>=1.1.2 <1.2.0",
       "resolved": "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
+    },
+    "yallist": {
+      "version": "2.1.2",
+      "from": "yallist@>=2.1.2 <3.0.0",
+      "resolved": "https://registry.npmjs.org/yallist/-/yallist-2.1.2.tgz"
     }
   }
 }
