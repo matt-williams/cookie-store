@@ -159,7 +159,7 @@ class Index extends Component {
             </Typography>
           </Toolbar>
         </AppBar>
-        <table>
+        <table className="greyGridTable">
         { this.state.cookieTable.map(function(item) {
           return (
           <tbody>
@@ -173,7 +173,8 @@ class Index extends Component {
             {item.cookies.map(function(cookie) {
               return (
                 <tr>
-                  <td colspan="3">{cookie.cookie}</td>
+                  <td></td>
+                  <td>{cookie.cookie}</td>
                 </tr>
               )}
             )}
