@@ -184,6 +184,7 @@ chrome.runtime.onInstalled.addListener(() => {
             console.err(err);
           } else {
             console.log(result);
+	    getBids();
           }
         });
       }
