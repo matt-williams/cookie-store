@@ -19,22 +19,24 @@ class Index extends Component {
     event.preventDefault();
 
     // collect form data
-    let account = event.target.account.value;
-    let privateKey = event.target.privateKey.value;
-    let note = event.target.note.value;
+    let desired_link = event.target.desired_link.value;
+    let bounty = event.target.bounty.value;
+    let price_per = event.target.price_per.value;
+    let private_key = "5J8GwbXpAfgj89gSUH4j63uknX9vdsQBVXctjW2tDuuxgGfNvi2";
 
     // prepare variables for the switch below to send transactions
     let actionName = "";
     let actionData = {};
 
     // define actionName and action according to event type
-    console.log(event.target.name);
-    switch (event.id === "test") {
+    switch (event.type) {
       case "submit":
-        actionName = "update";
+        actionName = "bidscreate";
         actionData = {
-          _user: account,
-          _note: note,
+          bidder: "acmesuper",
+          desired_link: desired_link,
+          bounty: bounty,
+          price_per: price_per
         };
         break;
       default:
@@ -42,39 +44,44 @@ class Index extends Component {
     }
 
     // eosjs function call: connect to the blockchain
-    const eos = Eos({keyProvider: privateKey, httpEndpoint: 'http://www.cookie-store.my.to:8888'});
+    const eos = Eos({keyProvider: private_key, httpEndpoint: 'http://www.cookie-store.my.to:8888'});
     const result = await eos.transaction({
       actions: [{
         account: "cookie.store",
         name: actionName,
         authorization: [{
-          actor: account,
-          permission: 'active',
+          actor: "acmesuper",
+          permission: "active",
         }],
         data: actionData,
       }],
     });
 
     console.log(result);
-    this.getUsedTable();
+
+    let payment_memo = result.transaction.transaction.actions[0].account + " " + result.transaction.transaction.actions[0].name;
+    console.log(payment_memo);
+    console.log(["acmesuper", "cookie.store", bounty, payment_memo]);
+
+    const payment_result = await eos.transaction({
+     actions: [{
+       account: "eosio.token",
+       name: "transfer",
+        authorization: [{
+          actor: "acmesuper",
+          permission: "active",
+        }],
+        data: ["acmesuper", "cookie.store", bounty, payment_memo],
+      }],
+    });
+
+    console.log(payment_result);
+
+    this.getCookiesTable();
   }
 
   // gets table data from the blockchain
-  // and saves it into the component state: "usedTable"
-  getUsedTable() {
-    const eos = Eos({httpEndpoint: 'http://www.cookie-store.my.to:8888'});
-    eos.getTableRows({
-      "json": true,
-      "code": "cookie.store",   // contract who owns the table
-      "scope": "cookie.store",  // scope of the table
-      "table": "used",    // name of the table as specified by the contract abi
-      "limit": 100,
-    }).then(result => this.setState({ usedTable: result.rows }));
-  }
-
-  // gets table data from the blockchain
-  // and saves it into the component state: "bidsTable"
-  async getBidsTable() {
+  async getCookiesTable() {
     let objectTable = [];
     const eos = Eos({httpEndpoint: 'http://www.cookie-store.my.to:8888'});
     const result = await eos.getTableRows({
@@ -89,27 +96,36 @@ class Index extends Component {
        const cookies = await eos.getTableRows(true, "cookie.store", "cookie.store", "used", "uuid", element.uuid, -1, null, "i64", "2");
        objectTable.push({bid:element,cookies:cookies.rows});
      }
-     console.log(objectTable);
      this.setState({cookieTable:objectTable});
   }
 
   componentDidMount() {
-    this.getBidsTable();
+    this.getCookiesTable();
   }
 
   render() {
-    const { classes } = this.props;
     return (
       <div>
-        <h1 align="center"><img src="/cookie128.png"/>Cookie Store</h1>
+        <h1 align="center"><img src="/cookie128.png" alt="cookie store"/>Cookie Store</h1>
+        <div id="bid" align="center">
+          <h3>Bid for verified cookies</h3>
+          <form onSubmit={this.handleFormEvent}>
+              <div id="bid_el">Desired link <input type="text" name="desired_link"></input><br/></div>
+              <div id="bid_el">Price per verified cookie <input type="text" name="price_per"></input><br/></div>
+              <div id="bid_el">Total bounty <input type="text" name="bounty"></input><br/></div>
+              <div id="bid_el"><input type="submit"></input></div>
+          </form>
+        </div>
           <div>
             <table className="minimalistBlack">
+              <thead>
               <tr>
                <th align="center">UUID</th>
                 <th>Desired Link</th>
                 <th align="right">Price Per Verified Cookie</th>
                 <th align="right">Remaining Bounty</th>
               </tr>
+              </thead>
               { this.state.cookieTable.map(function(item) {
                 return (
                   <tbody>
@@ -123,7 +139,7 @@ class Index extends Component {
                       return (
                         <tr>
                           <td></td>
-                          <td colspan="3">{cookie.cookie}</td>
+                          <td colSpan="3">{cookie.cookie}</td>
                         </tr>
                       )}
                     )}
