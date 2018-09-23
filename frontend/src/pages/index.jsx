@@ -61,7 +61,8 @@ class Index extends Component {
 
     let payment_memo = result.transaction.transaction.actions[0].account + " " + result.transaction.transaction.actions[0].name;
     console.log(payment_memo);
-    console.log(["acmesuper", "cookie.store", bounty, payment_memo]);
+    let payment_data = {from: "acmesuper", to: "cookie.store", quantity: bounty, memo: payment_memo};
+    console.log(payment_data)
 
     const payment_result = await eos.transaction({
      actions: [{
@@ -71,7 +72,7 @@ class Index extends Component {
           actor: "acmesuper",
           permission: "active",
         }],
-        data: ["acmesuper", "cookie.store", bounty, payment_memo],
+        data: payment_data,
       }],
     });
 
