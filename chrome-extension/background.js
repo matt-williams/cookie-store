@@ -65,14 +65,14 @@ chrome.runtime.onInstalled.addListener(() => {
 
   function getBids() {
     if (eos) {
-      eos.getTableRows(true, 'cookie.store', 'cookie.store', 'bids', (error, result) => {
+      eos.getTableRows(true, 'cookie.store', 'cookie.store', 'bids', 'uuid', 0, -1, 100, (error, result) => {
         if (error) {
           console.error(error);
           bids = [];
         } else {
           bids = result.rows;
         }
-        eos.getTableRows(true, 'cookie.store', 'cookie.store', 'used', (error, result) => {
+        eos.getTableRows(true, 'cookie.store', 'cookie.store', 'used', 'uuid', 0, -1, 100, (error, result) => {
           if (error) {
             console.error(error);
             used = [];
