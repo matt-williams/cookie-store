@@ -121,7 +121,7 @@ chrome.runtime.onInstalled.addListener(() => {
         "type": "basic",
         "iconUrl": "images/cookie48.png",
         "title": `Share your identity for ${bid.price_per}?`,
-        "message": `${bid.bidder} wants to know your identity on this site - share it for ${bid.price_per}?`,
+        "message": `${bid.bidder} wants to know your identity on ${bid.desired_link} - share it for ${bid.price_per}?`,
         "buttons": [
           {
             "title": "Accept",
