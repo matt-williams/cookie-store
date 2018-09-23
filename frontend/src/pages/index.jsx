@@ -2,47 +2,12 @@ import React, { Component } from 'react';
 import Eos from 'eosjs'; // https://github.com/EOSIO/eosjs
 import './styles.css';
 
-// material-ui dependencies
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-
-// set up styling classes using material-ui "withStyles"
-const styles = theme => ({
-  card: {
-    margin: 20,
-  },
-  paper: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2,
-  },
-  formButton: {
-    marginTop: theme.spacing.unit,
-    width: "100%",
-  },
-  pre: {
-    background: "#ccc",
-    padding: 10,
-    marginBottom: 0.
-  },
-});
-
-// Index component
 class Index extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
       cookieTable: [],
-      bidsTable: [],
-      usedTable: [] // to store the table rows from smart contract
     };
     this.handleFormEvent = this.handleFormEvent.bind(this);
   }
@@ -119,7 +84,6 @@ class Index extends Component {
       "table": "bids",    // name of the table as specified by the contract abi
       "limit": 100,
     });
-    // this.setState({ bidsTable: result.rows }));
      for (let i = 0; i < result.rows.length; i++) {
        const element = result.rows[i];
        const cookies = await eos.getTableRows(true, "cookie.store", "cookie.store", "used", "uuid", element.uuid, -1, null, "i64", "2");
@@ -134,107 +98,43 @@ class Index extends Component {
   }
 
   render() {
-    const { usedTable } = this.state;
     const { classes } = this.props;
-
-    // generate each note as a card
-    const generateCard = (key, cookie) => (
-      <Card className={classes.card} key={key}>
-        <CardContent>
-          <Typography variant="headline" component="h2">
-            {cookie}
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-    let noteCards = usedTable.map((row, i) =>
-      generateCard(i, row.cookie));
-
     return (
       <div>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <Typography variant="title" color="inherit">
-              Cookie Store
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <table className="greyGridTable">
-        { this.state.cookieTable.map(function(item) {
-          return (
-          <tbody>
-            <tr>
-              <td>{item.bid.uuid}</td>
-              <td>{item.bid.desired_link}</td>
-              <td>{item.bid.bounty}</td>
-              <td>{item.bid.price_per}</td>
-            </tr>
-            <tr>
-            {item.cookies.map(function(cookie) {
-              return (
-                <tr>
-                  <td></td>
-                  <td>{cookie.cookie}</td>
-                </tr>
-              )}
-            )}
-            </tr>
-          </tbody>
-          )
-        })}
-        </table>
-        {noteCards}
-        <Paper className={classes.paper}>
-          <form onSubmit={this.handleFormEvent}>
-            <TextField
-              name="account"
-              autoComplete="off"
-              label="Account"
-              margin="normal"
-              fullWidth
-            />
-            <TextField
-              name="privateKey"
-              autoComplete="off"
-              label="Private key"
-              margin="normal"
-              fullWidth
-            />
-            <TextField
-              name="note"
-              autoComplete="off"
-              label="Note (Optional)"
-              margin="normal"
-              multiline
-              rows="10"
-              fullWidth
-            />
-            <Button
-              id="test"
-              name="test"
-              variant="contained"
-              color="primary"
-              className={classes.formButton}
-              type="submit">
-              Add / Update note
-            </Button>
-          </form>
-        </Paper>
+        <h1 align="center"><img src="/cookie128.png"/>Cookie Store</h1>
+          <div>
+            <table className="minimalistBlack">
+              <tr>
+               <th align="center">UUID</th>
+                <th>Desired Link</th>
+                <th align="right">Price Per Verified Cookie</th>
+                <th align="right">Remaining Bounty</th>
+              </tr>
+              { this.state.cookieTable.map(function(item) {
+                return (
+                  <tbody>
+                    <tr>
+                      <td align="center">{item.bid.uuid}</td>
+                      <td>{item.bid.desired_link}</td>
+                      <td align="right">{item.bid.price_per}</td>
+                      <td align="right">{item.bid.bounty}</td>
+                    </tr>
+                    {item.cookies.map(function(cookie) {
+                      return (
+                        <tr>
+                          <td></td>
+                          <td colspan="3">{cookie.cookie}</td>
+                        </tr>
+                      )}
+                    )}
+                  </tbody>
+                  )
+                })}
+            </table>
+          </div>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(Index);
-/**        <pre className={classes.pre}>
-          Below is a list of pre-created accounts information for add/update note:
-          <br/><br/>
-          accounts = { JSON.stringify(accounts, null, 2) }
-        </pre>
-            <input
-              id="test2"
-              name="name"
-              type="submit"
-              value="click me"
-              onClick={ this.clicktest }
-            />**/
+export default(Index);
