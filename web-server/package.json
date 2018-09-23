@@ -9,6 +9,7 @@
   },
   "author": "Matt Williams <matwilliams@hotmail.com>",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "uuid": "^3.3.2"
   }
 }
