@@ -1,10 +1,11 @@
 const express = require('express');
+const uuid = require('uuid/v4');
 const app = express();
 const port = process.env.PORT || 8080;
 const server = process.env.SERVER || "server1";
 
 app.get('/', (req, res) => {
-  res.set('X-CookieStore', `${server} 123456789abcdef`);
+  res.set('X-CookieStore', `${server} ${uuid()}`);
   res.send('Hello World!');
 })
 
